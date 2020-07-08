@@ -1,1 +1,14 @@
+version: 0.2
 
+phases:
+  install:
+    runtime-versions:
+      java: corretto8
+  build:
+    commands:
+       - echo "building my amazing repo..."
+       - mvn test
+       - export token=$(curl -H "Content-Type: application/json" -X POST --data "{ "client_id": "B9B92CC6655B4421B8B536A9FF318094","client_secret": "0332eddb162e3d6c1d5fddc8748a7363fc36f09e023dbcf4a141606e663bff15" }" https://xraydemoone.atlassian.net/api/v1/authenticate| tr -d '"')
+       - echo $token
+       - curl -H "Content-Type: text/xml" -H "Authorization: Bearer $token" --data @target/surefire-reports/TEST-com.xpand.java.CalcTest.xml  "https://xraydemoone.atlassian.net/api/v1/import/execution/junit?projectKey=J1"
+       - echo "done" 
